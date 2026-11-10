@@ -1,0 +1,9 @@
+{
+  "event": "acuity_booking",
+  "transaction_id": "1512495506",
+  "value": 85,
+  "currency": "USD",
+  "appointment_type": "Puppy Training Session",
+  "booking_type": "paid",
+  "page_path": "/book/"
+}

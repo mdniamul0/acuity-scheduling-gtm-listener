@@ -1,0 +1,36 @@
+<script type="text/plain" id="mdn-acuity-data">
+id=%id%
+price=%price%
+type=%type%
+appointmentType=%appointmentType%
+</script>
+<script>
+/* Acuity booking sender (free version) by MD Niamul - mdniamul.com
+   Paste in Acuity: Integrations → Custom conversion tracking → HTML tracking code.
+   Acuity fills the %...% values above; quotes in names cannot break this code. */
+(function () {
+  var el = document.getElementById('mdn-acuity-data');
+  if (!el) return;
+  var b = { source: 'mdn-acuity', version: 1 };
+  var tmp = document.createElement('textarea');
+  var rows = el.textContent.split(/\r?\n/);
+  for (var i = 0; i < rows.length; i++) {
+    var at = rows[i].indexOf('=');
+    if (at < 1) continue;
+    tmp.innerHTML = rows[i].slice(at + 1);
+    var val = tmp.value.trim();
+    b[rows[i].slice(0, at).trim()] = /^%[A-Za-z]+%$/.test(val) ? '' : val;
+  }
+  if (!b.id) return; // placeholders not filled: not a real booking
+  var msg = JSON.stringify(b);
+  // 1) Embedded on your site: send it up to the page that holds the scheduler
+  try { if (window.top !== window.self) window.top.postMessage(msg, '*'); } catch (e) {}
+  // 2) Direct Acuity page with GTM pasted in this box: hand it to GTM here
+  var top = '';
+  try { var a = window.location.ancestorOrigins; top = a && a.length ? a[a.length - 1] : ''; } catch (e) {}
+  if (!top || /(acuityscheduling|squarespacescheduling)\.com$|\.as\.me$/.test(top)) {
+    window.__mdnAcuityBooking = b;
+    try { window.dispatchEvent(new CustomEvent('mdn-acuity-booking', { detail: b })); } catch (e) {}
+  }
+})();
+</script>
